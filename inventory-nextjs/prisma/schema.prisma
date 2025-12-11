@@ -6,9 +6,28 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../app/generated/prisma"
-}
+  output = "../app/generated/prisma"
+  }
+
 
 datasource db {
   provider = "postgresql"
+
+}
+
+model Product {
+  id          String   @id @default(cuid()) //cuid() generates a unique identifier for each product 
+  userId      String
+  name        String
+  sku         String?  @unique // Stock Keeping Unit, tracking code, ? means it's optional
+  price       Decimal  @db.Decimal(12, 2) // Decimal type for precise monetary values
+  quantity    Int      @default(0)
+  lowStock    Int?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, name]) // Index for faster queries on userId and name
+  @@index([createdAt]) // Index for sorting/filtering by creation date
+
 }
